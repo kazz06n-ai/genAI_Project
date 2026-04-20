@@ -4,17 +4,17 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_classic.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 
-
 def get_rag_chain():
-    # Load same embedding model used in ingest.py
+    # UPDATED: Load embedding model on CUDA
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
-        model_kwargs={'device': 'cpu'}
+        model_kwargs={'device': 'cuda'}
     )
 
     vector_db = Chroma(persist_directory="./db", embedding_function=embeddings)
 
-    # Connect to local Ollama (Ensure Ollama is running!)
+    # Ollama automatically uses your GPU if available.
+    # Ensure your NVIDIA drivers and Toolkit are up to date.
     llm = Ollama(model="gemma4", temperature=0.1)
 
     template = """
